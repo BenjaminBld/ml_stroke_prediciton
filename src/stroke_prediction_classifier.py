@@ -1,4 +1,5 @@
 # Import necessary libraries
+from typing import List, Tuple, Union, Optional
 import pandas as pd
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
@@ -21,8 +22,7 @@ class StrokePrediction(BaseEstimator, TransformerMixin):
     """
     StrokePrediction class handles preprocessing, undersampling, model training, model evaluation, and prediction.
     """
-
-    def __init__(self, models, n_features=None, balance_ratio=3):
+    def __init__(self, models: List[Tuple[str, BaseEstimator]], n_features: Optional[int] = None, balance_ratio: int = 3):
         """
         Initializes the StrokePrediction object.
 
@@ -43,7 +43,7 @@ class StrokePrediction(BaseEstimator, TransformerMixin):
                 max_features=self.n_features,
             )
 
-    def preprocess(self, X, y=None):
+    def preprocess(self, X: Union[pd.DataFrame, np.ndarray], y: Optional[Union[pd.DataFrame, np.ndarray]] = None) -> np.ndarray:
         """
         Preprocesses the data by applying the appropriate pipeline to numerical and categorical columns.
 
@@ -109,7 +109,7 @@ class StrokePrediction(BaseEstimator, TransformerMixin):
 
         return X_processed
 
-    def undersample(self, X, y):
+    def undersample(self, X: np.ndarray, y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         """
         Undersamples the data.
 
@@ -140,7 +140,7 @@ class StrokePrediction(BaseEstimator, TransformerMixin):
         y_undersampled = np.hstack((np.zeros(num_no_stroke), np.ones(len(X_stroke))))
         return X_undersampled, y_undersampled
 
-    def train_model(self, X_train, y_train):
+    def train_model(self, X_train: np.ndarray, y_train: np.ndarray) -> VotingClassifier:
         """
         Trains the models.
 
@@ -168,7 +168,7 @@ class StrokePrediction(BaseEstimator, TransformerMixin):
 
         return self.voting_clf
 
-    def train(self, X, y, oversample=True):
+    def train(self, X: pd.DataFrame, y: pd.Series, oversample: bool = True) -> 'StrokePrediction':
         """
         Trains the model. This includes preprocessing the data, undersampling (if needed), and training the model.
 
@@ -201,7 +201,7 @@ class StrokePrediction(BaseEstimator, TransformerMixin):
         self.y_test = y_test
         return self
 
-    def evaluate(self):
+    def evaluate(self) -> 'StrokePrediction':
         """
         Evaluates the model. This includes making predictions on the test data and printing the confusion matrix and
         classification report.
@@ -240,7 +240,7 @@ class StrokePrediction(BaseEstimator, TransformerMixin):
         return self
 
 
-    def predict(self, X):
+    def predict(self, X: Union[pd.DataFrame, np.ndarray]) -> np.ndarray:
         """
         Makes predictions on the given data.
 
