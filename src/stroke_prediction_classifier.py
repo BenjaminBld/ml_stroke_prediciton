@@ -22,7 +22,13 @@ class StrokePrediction(BaseEstimator, TransformerMixin):
     """
     StrokePrediction class handles preprocessing, undersampling, model training, model evaluation, and prediction.
     """
-    def __init__(self, models: List[Tuple[str, BaseEstimator]], n_features: Optional[int] = None, balance_ratio: int = 3):
+
+    def __init__(
+        self,
+        models: List[Tuple[str, BaseEstimator]],
+        n_features: Optional[int] = None,
+        balance_ratio: int = 3,
+    ):
         """
         Initializes the StrokePrediction object.
 
@@ -43,7 +49,11 @@ class StrokePrediction(BaseEstimator, TransformerMixin):
                 max_features=self.n_features,
             )
 
-    def preprocess(self, X: Union[pd.DataFrame, np.ndarray], y: Optional[Union[pd.DataFrame, np.ndarray]] = None) -> np.ndarray:
+    def preprocess(
+        self,
+        X: Union[pd.DataFrame, np.ndarray],
+        y: Optional[Union[pd.DataFrame, np.ndarray]] = None,
+    ) -> np.ndarray:
         """
         Preprocesses the data by applying the appropriate pipeline to numerical and categorical columns.
 
@@ -109,7 +119,9 @@ class StrokePrediction(BaseEstimator, TransformerMixin):
 
         return X_processed
 
-    def undersample(self, X: np.ndarray, y: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    def undersample(
+        self, X: np.ndarray, y: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """
         Undersamples the data.
 
@@ -168,7 +180,9 @@ class StrokePrediction(BaseEstimator, TransformerMixin):
 
         return self.voting_clf
 
-    def train(self, X: pd.DataFrame, y: pd.Series, oversample: bool = True) -> 'StrokePrediction':
+    def train(
+        self, X: pd.DataFrame, y: pd.Series, oversample: bool = True
+    ) -> "StrokePrediction":
         """
         Trains the model. This includes preprocessing the data, undersampling (if needed), and training the model.
 
@@ -201,7 +215,7 @@ class StrokePrediction(BaseEstimator, TransformerMixin):
         self.y_test = y_test
         return self
 
-    def evaluate(self) -> 'StrokePrediction':
+    def evaluate(self) -> "StrokePrediction":
         """
         Evaluates the model. This includes making predictions on the test data and printing the confusion matrix and
         classification report.
@@ -228,17 +242,16 @@ class StrokePrediction(BaseEstimator, TransformerMixin):
         print(cr)
 
         # Create a DataFrame with the IDs, true labels, and predicted labels
-        predictions_df = pd.DataFrame({
-            'ID': self.X_test.index,
-            'y_true': self.y_test,
-            'y_pred': y_pred
-        })
+        predictions_df = pd.DataFrame(
+            {"ID": self.X_test.index, "y_true": self.y_test, "y_pred": y_pred}
+        )
 
         # Save the DataFrame to a CSV file
-        predictions_df.to_csv('../predictions/stroke_classifier_eval_preds.csv', index=False)
+        predictions_df.to_csv(
+            "../predictions/stroke_classifier_eval_preds.csv", index=False
+        )
 
         return self
-
 
     def predict(self, X: Union[pd.DataFrame, np.ndarray]) -> np.ndarray:
         """
